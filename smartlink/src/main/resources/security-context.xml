@@ -13,6 +13,7 @@
         <intercept-url pattern="/webs**"  access="permitAll"  />
         <intercept-url pattern="/links**" access="hasRole('USER')" />
         <intercept-url pattern="/tracker**" access="hasRole('USER')" />
+        <intercept-url pattern="/admin**" access="hasRole('USER')" />
         
         <!-- <access-denied-handler error-page="/403" /> -->
         <form-login authentication-failure-url="/login?error" login-page="/login" username-parameter="username" password-parameter="password"/>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- Base Definition -->
+	<definition name="base-definition" template="/WEB-INF/pages/layout/layout.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="header" value="/WEB-INF/pages/layout/header.jsp" />
+		<put-attribute name="menu" value="/WEB-INF/pages/layout/menu.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/pages/layout/footer.jsp" />
+	</definition>
+	
+	<!-- Empty body Definition -->
+	<definition name="empty-body-definition" template="/WEB-INF/pages/layout/emptylayout.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="body" value="" />
+	</definition>
+	
+	<definition name="login" extends="empty-body-definition">
+		<put-attribute name="title" value="Đăng nhập" />
+		<put-attribute name="body" value="/WEB-INF/pages/login.jsp" />
+	</definition>
+
+	<!-- Home Page -->
+	<definition name="404" extends="base-definition">
+		<put-attribute name="title" value="Lỗi" />
+		<put-attribute name="body" value="/WEB-INF/pages/404.jsp" />
+	</definition>
+	
+	<definition name="smartlink" extends="base-definition">
+		<put-attribute name="title" value="Songoku" />
+		<put-attribute name="body" value="/WEB-INF/pages/smartlink.jsp" />
+	</definition>
+	
+	<definition name="tracker" extends="base-definition">
+		<put-attribute name="title" value="Songoku" />
+		<put-attribute name="body" value="/WEB-INF/pages/tracker.jsp" />
+	</definition>
+
+</tiles-definitions>

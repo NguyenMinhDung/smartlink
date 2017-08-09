@@ -2,7 +2,6 @@ package com.winds.smartlink.controller;
 
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.winds.smartlink.authen.model.User;
 import com.winds.smartlink.authen.service.UserService;
-import com.winds.smartlink.dtos.FreegeoIP;
 import com.winds.smartlink.dtos.SearchSmartlinkTracker;
 import com.winds.smartlink.exceptions.BusinessException;
 import com.winds.smartlink.models.SmartlinkTracker;
@@ -121,47 +117,6 @@ public class SmartlinkController {
 		}
 		
 		return null;
-	}
-	
-	@RequestMapping(value = "/webs/{userId}/{channel}", method = RequestMethod.GET)
-	public String dynamicLinks(@PathVariable("userId") Long userId, 
-								@PathVariable("channel") String channel, 
-								HttpServletRequest request) {
-		try {
-			String json = WebUtils.get("http://freegeoip.net/json/" + request.getRemoteAddr());
-			
-			FreegeoIP freegeo = JacksonUtils.parseJson(json, FreegeoIP.class);
-			
-			String countryCode = StringUtils.isEmpty(freegeo.getCountry_code()) ? "local" : freegeo.getCountry_code();
-			
-			String[] req = request.getRequestURI().split("/"); ///smartlink/webs/2/123.html/
-			
-			Long smartlinkUserId = Long.valueOf(req[3]);
-			
-			SearchSmartlinkTracker trackerSearch = new SearchSmartlinkTracker();
-			trackerSearch.setCountryCode(countryCode);
-			trackerSearch.setTrackerDate(new Date());
-			//trackerSearch.setSmartlinkUserId(smartlinkUserId); //3 = smartlinkUserId
-			
-			SmartlinkTracker smartlinkTracker = smartlinkTrackerService.searchOne(trackerSearch);
-			
-			if(smartlinkTracker == null) {
-				smartlinkTracker = new SmartlinkTracker();
-				smartlinkTracker.setCountryCode(countryCode);
-				smartlinkTracker.setSmartLinkUserId(smartlinkUserId);
-				smartlinkTracker.setVisit(1);
-				smartlinkTracker.setClicked(0);
-				smartlinkTracker.setTrackerDate(new Date());
-				smartlinkTrackerService.save(smartlinkTracker);
-			} else {
-				smartlinkTracker.setVisit(smartlinkTracker.getVisit() + 1);
-				smartlinkTrackerService.update(smartlinkTracker);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return "dp/" + userId + "/" + channel + "/index";
 	}
 
 	@RequestMapping(value = "/links", method = RequestMethod.POST)
