@@ -1,0 +1,11 @@
+<html>
+	<head>
+		$metadata
+		<script>
+			window.location = "$redirectLink";
+		</script>
+	</head>
+	<body>
+		Redirect
+	</body>
+</html>

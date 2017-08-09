@@ -1,0 +1,65 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security.xsd">
+	 <!-- enable use-expressions -->
+	<http auto-config="true" >
+        <intercept-url pattern="/" access="permitAll" />
+        <intercept-url pattern="/api**"  access="permitAll"  />
+        <intercept-url pattern="/webs**"  access="permitAll"  />
+        <intercept-url pattern="/links**" access="hasRole('USER')" />
+        <intercept-url pattern="/tracker**" access="hasRole('USER')" />
+        
+        <!-- <access-denied-handler error-page="/403" /> -->
+        <form-login authentication-failure-url="/login?error" login-page="/login" username-parameter="username" password-parameter="password"/>
+        
+        <csrf disabled="true" />
+    </http>
+  
+    <authentication-manager>
+        <authentication-provider user-service-ref="customUserDetailsService">
+        	<password-encoder ref="bcryptEncoder"/>
+        </authentication-provider>
+    </authentication-manager>
+      
+    <beans:bean id="customUserDetailsService" class="com.winds.smartlink.authen.service.CustomUserDetailsService"/>
+    
+    <beans:bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+    
+    <!-- Auto scan component -->
+    <context:component-scan base-package="com.winds.smartlink*" />
+	
+	<!-- <beans:bean id="savedRequestAwareAuthenticationSuccessHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<beans:property name="targetUrlParameter" value="targetUrl" />
+	</beans:bean>
+	
+	Select users and user_roles from database
+	<beans:bean id="customUserDetailsService"
+		class="com.winds.smartlink.authen.service.CustomUserDetailsService">
+		<beans:property name="usersByUsernameQuery" value="select * from accounts where username = ?"/>
+		<beans:property name="authoritiesByUsernameQuery" value="select username, role from account_roles where username =?" />
+		<beans:property name="dataSource" ref="dataSource" />
+	</beans:bean>
+ 	
+	<beans:bean id="userDetailsDao" class="com.winds.smartlink.authen.dao.UserDetailsDaoImpl" >
+		<beans:property name="dataSource" ref="dataSource" />
+	</beans:bean>
+	
+	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	
+	<beans:bean id="authenticationProvider"
+		class="com.winds.authen.provider.LimitLoginAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="customUserDetailsService" />
+		<beans:property name="userDetailsDao" ref="userDetailsDao" />
+		<beans:property name="passwordEncoder" ref="encoder"/>
+	</beans:bean>
+	
+	<authentication-manager>
+	  <authentication-provider ref="authenticationProvider"/>
+	</authentication-manager> -->
+</beans:beans>

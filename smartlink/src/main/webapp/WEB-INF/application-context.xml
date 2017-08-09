@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd"
+    default-autowire="byName">
+	
+	<context:annotation-config />
+	<context:spring-configured/>
+
+	<!-- Connect to database -->
+	<import resource="classpath:datasource-context.xml" />
+	
+	<!-- Config spring security -->
+	<import resource="classpath:security-context.xml" />
+	
+	<!-- Provide service for handle file -->
+	<!-- <import resource="file-server-context.xml" />
+	
+	<context:component-scan base-package="com.winds.youtube.dao,com.winds.youtube.business,com.winds.youtube.jobs" /> -->
+</beans>

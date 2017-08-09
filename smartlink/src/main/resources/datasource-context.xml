@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />		
+		
+		<!-- DB test  -->
+		<!-- <property name="url" value="jdbc:mysql://localhost:3306/smarlink" />
+		<property name="username" value="root" />
+		<property name="password" value="" />
+		 -->
+		 
+		<!-- DB Real  -->
+		<!-- <property name="url" value="jdbc:mysql://45.32.68.156:3306/smarlink" />
+		<property name="username" value="root" />
+		<property name="password" value="123456" /> -->
+		
+		<!-- DB Test  -->
+		<!-- <property name="url" value="jdbc:mysql://localhost:3306/smarlink" />
+		<property name="username" value="root" />
+		<property name="password" value="P@ssw0rd" /> -->
+		
+		<!-- DB test  -->
+		<property name="url" value="jdbc:mysql://localhost:3306/smarlink" />
+		<property name="username" value="root" />
+		<property name="password" value="" />
+				
+	  	<!-- <property name="testWhileIdle" value="true"/>
+	  	<property name="testOnBorrow" value="true"/>
+	  	<property name="testOnReturn" value="false"/>
+	  	<property name="validationQuery" value="SELECT 1"/>
+	  	<property name="validationInterval" value="30000"/>
+	  	<property name="timeBetweenEvictionRunsMillis" value="30000"/>
+	  	<property name="maxActive" value="10000"/>
+	  	<property name="minIdle" value="1000"/>
+	  	<property name="maxWait" value="10000"/>
+	  	<property name="initialSize" value="10"/>
+	  	<property name="removeAbandonedTimeout" value="600"/>
+	  	<property name="removeAbandoned" value="true"/>
+	  	<property name="minEvictableIdleTimeMillis" value="300000"/>
+	  	<property name="jmxEnabled" value="true"/>
+	  	<property name="jdbcInterceptors" value="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"/> -->
+	</bean>
+	
+	<!-- Provide connection -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="annotatedClasses">
+			<list>
+				<value>com.winds.smartlink.authen.model.User</value>
+				<value>com.winds.smartlink.authen.model.Profile</value>
+				<value>com.winds.smartlink.models.UserLink</value>
+				<value>com.winds.smartlink.models.SmartlinkTracker</value>
+				<value>com.winds.smartlink.models.SmartlinkUser</value>
+				<value>com.winds.smartlink.models.Smartlink</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+  				<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+				<prop key="hibernate.connection.autocommit">false</prop>
+				<prop key="hibernate.connection.release_mode">on_close</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.max_fetch_depth">2</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+			</props>
+		</property>
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<bean id="repository" class="com.winds.smartlink.repo.RepositoryImpl" scope="singleton"/>
+	
+	<bean id="insertRepository"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref local="transactionManager" />
+		</property>
+		<property name="target">
+			<bean class="com.winds.smartlink.repo.CrudRepositoryImpl">
+				<constructor-arg ref="sessionFactory" />
+			</bean>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="selectRepository"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref local="transactionManager" />
+		</property>
+		<property name="target">
+			<bean class="com.winds.smartlink.repo.SelectRepositoryImpl">
+				<constructor-arg ref="sessionFactory" />
+			</bean>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+	
+</beans>
