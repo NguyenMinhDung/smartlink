@@ -16,9 +16,9 @@
 		 -->
 		 
 		<!-- DB Real  -->
-		<!-- <property name="url" value="jdbc:mysql://45.32.68.156:3306/smarlink" />
+		<property name="url" value="jdbc:mysql://45.32.68.156:3306/smarlink" />
 		<property name="username" value="root" />
-		<property name="password" value="123456" /> -->
+		<property name="password" value="123456" />
 		
 		<!-- DB Test  -->
 		<!-- <property name="url" value="jdbc:mysql://localhost:3306/smarlink" />
@@ -26,9 +26,9 @@
 		<property name="password" value="P@ssw0rd" /> -->
 		
 		<!-- DB test  -->
-		<property name="url" value="jdbc:mysql://localhost:3306/smarlink" />
+		<!-- <property name="url" value="jdbc:mysql://localhost:3306/smarlink" />
 		<property name="username" value="root" />
-		<property name="password" value="" />
+		<property name="password" value="" /> -->
 				
 	  	<!-- <property name="testWhileIdle" value="true"/>
 	  	<property name="testOnBorrow" value="true"/>
@@ -53,6 +53,7 @@
 			<list>
 				<value>com.winds.smartlink.authen.model.User</value>
 				<value>com.winds.smartlink.authen.model.Profile</value>
+				<value>com.winds.smartlink.authen.model.UserProfile</value>
 				<value>com.winds.smartlink.models.UserLink</value>
 				<value>com.winds.smartlink.models.SmartlinkTracker</value>
 				<value>com.winds.smartlink.models.SmartlinkUser</value>

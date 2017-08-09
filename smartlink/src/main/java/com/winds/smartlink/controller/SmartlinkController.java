@@ -64,7 +64,6 @@ public class SmartlinkController {
 	@RequestMapping(value = "/links", method = RequestMethod.GET)
 	public ModelAndView loginPage(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
-		model.put("user", getPrincipal());
 		
 		try {
 			SmartlinkUser userSmartlink = smartlinkService.findSmartlinkUserEmail(getPrincipal());
@@ -88,7 +87,6 @@ public class SmartlinkController {
 	@RequestMapping(value = "/tracker", method = RequestMethod.GET)
 	public ModelAndView tracker() {
 		ModelMap model = new ModelMap();
-		model.put("user", getPrincipal());
 
 		return new ModelAndView("tracker", model);
 	}
@@ -132,7 +130,6 @@ public class SmartlinkController {
 			
 			makeDynamicLink(request, userSmartlink, userLink.getMetadata());
 			
-			model.put("user", getPrincipal());
 			model.put("link", userLink.getLink());
 			model.put("success", 1);
 

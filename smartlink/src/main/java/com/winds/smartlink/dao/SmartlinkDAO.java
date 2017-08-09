@@ -1,6 +1,7 @@
 package com.winds.smartlink.dao;
 
 import com.winds.smartlink.exceptions.DataAccessException;
+import com.winds.smartlink.models.Smartlink;
 import com.winds.smartlink.models.SmartlinkUser;
 
 public interface SmartlinkDAO {
@@ -12,5 +13,9 @@ public interface SmartlinkDAO {
 	SmartlinkUser findSmartlinkUserEmail(String email) throws DataAccessException;
 
 	void update(SmartlinkUser userSmartlink) throws DataAccessException;
+
+	Smartlink save(Smartlink smartlink) throws DataAccessException;
+
+	SmartlinkUser save(SmartlinkUser smartlinkUser) throws DataAccessException;
 
 }

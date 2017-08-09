@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.winds.smartlink.authen.model.User;
+import com.winds.smartlink.authen.model.UserProfile;
 import com.winds.smartlink.exceptions.DataAccessException;
 import com.winds.smartlink.repo.IRepository;
 
@@ -32,4 +33,13 @@ public class UserDAOImpl implements UserDAO {
 		return repo.getEntityByHQL(GET_USER_BY_USERNAME, params);
 	}
 
+	@Override
+	public User save(User user) throws DataAccessException {
+		return repo.create(user);
+	}
+
+	@Override
+	public UserProfile saveProfile(UserProfile userProfile) throws DataAccessException {
+		return repo.create(userProfile);
+	}
 }

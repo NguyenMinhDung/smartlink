@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.winds.smartlink.exceptions.DataAccessException;
+import com.winds.smartlink.models.Smartlink;
 import com.winds.smartlink.models.SmartlinkUser;
 import com.winds.smartlink.repo.IRepository;
 
@@ -63,4 +64,13 @@ public class SmartlinkDAOImpl implements SmartlinkDAO{
 		repo.update(userSmartlink);
 	}
 	
+	@Override
+	public Smartlink save(Smartlink smartlink) throws DataAccessException {
+		return repo.create(smartlink);
+	}
+	
+	@Override
+	public SmartlinkUser save(SmartlinkUser smartlinkUser) throws DataAccessException {
+		return repo.create(smartlinkUser);
+	}
 }
