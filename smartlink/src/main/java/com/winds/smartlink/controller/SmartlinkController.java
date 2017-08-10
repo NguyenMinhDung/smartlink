@@ -51,11 +51,6 @@ public class SmartlinkController {
 	@Autowired
 	private UserService userService;
 
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		getCurrentUser();
-	}
-
 	@RequestMapping(value = "/error", method = RequestMethod.GET)
 	public String error(HttpServletRequest request) {
 		return "404";

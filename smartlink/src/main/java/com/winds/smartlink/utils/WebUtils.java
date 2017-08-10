@@ -8,7 +8,7 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 
 public class WebUtils {
-	private static final String HTTP_PORT = "80";
+	private static final int HTTP_PORT = 80;
 	// HTTP GET request
 	public static String get(String url) throws Exception {
 		URL obj = new URL(url);
@@ -36,7 +36,7 @@ public class WebUtils {
 	}
 
 	public static String getDomainAndPort(HttpServletRequest request) {
-		if(HTTP_PORT.equals(request.getLocalPort())) {
+		if(HTTP_PORT == request.getLocalPort()) {
 			return request.getServerName();
 		}
 		
