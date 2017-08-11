@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.winds.smartlink.dtos.SmartlinkCondition;
 import com.winds.smartlink.exceptions.DataAccessException;
 import com.winds.smartlink.models.Smartlink;
 import com.winds.smartlink.models.SmartlinkUser;
@@ -72,5 +73,19 @@ public class SmartlinkDAOImpl implements SmartlinkDAO{
 	@Override
 	public SmartlinkUser save(SmartlinkUser smartlinkUser) throws DataAccessException {
 		return repo.create(smartlinkUser);
+	}
+	
+	@Override
+	public SmartlinkUser autoChooseSmartlink(SmartlinkCondition condition) throws DataAccessException {
+		StringBuilder sql = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		
+		sql.append(" select slu.* from smartlink_user slu ");
+		sql.append(" join smartlink sm on sm.smartLinkId = slu.smartLinkId ");
+		sql.append(" where slu.userId = ? ");
+		
+		params.add(condition.getUserId());
+		
+		return repo.getEntityBySQL(SmartlinkUser.class, sql.toString(), params);
 	}
 }

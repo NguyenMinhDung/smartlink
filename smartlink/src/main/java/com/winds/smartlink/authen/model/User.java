@@ -38,7 +38,7 @@ public class User {
 	private Integer status;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "USERS_PROFILES", 
+    @JoinTable(name = "users_profiles", 
              joinColumns = { @JoinColumn(name = "userId") }, 
              inverseJoinColumns = { @JoinColumn(name = "profileId") })
     private Set<Profile> profiles = new HashSet<Profile>();

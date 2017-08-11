@@ -11,6 +11,7 @@ import com.winds.smartlink.authen.model.User;
 import com.winds.smartlink.authen.model.UserProfile;
 import com.winds.smartlink.dao.SmartlinkDAO;
 import com.winds.smartlink.dtos.AddUserInput;
+import com.winds.smartlink.dtos.SmartlinkCondition;
 import com.winds.smartlink.exceptions.BusinessException;
 import com.winds.smartlink.exceptions.DataAccessException;
 import com.winds.smartlink.models.Smartlink;
@@ -114,5 +115,14 @@ public class SmartlinkServiceImpl implements SmartlinkService{
 		userDAO.saveProfile(userProfile);
 		
 		return user;
+	}
+	
+	@Override
+	public SmartlinkUser autoChooseSmartlink(SmartlinkCondition condition) throws BusinessException {
+		try {
+			return smartlinkDAO.autoChooseSmartlink(condition);
+		} catch (DataAccessException e) {
+			throw new BusinessException(e);
+		}
 	}
 }

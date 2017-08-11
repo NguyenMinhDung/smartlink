@@ -13,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,9 +24,7 @@ import com.winds.smartlink.authen.service.UserService;
 import com.winds.smartlink.dtos.SearchSmartlinkTracker;
 import com.winds.smartlink.exceptions.BusinessException;
 import com.winds.smartlink.models.SmartlinkTracker;
-import com.winds.smartlink.models.SmartlinkUser;
 import com.winds.smartlink.models.UserLink;
-import com.winds.smartlink.services.SmartlinkService;
 import com.winds.smartlink.services.SmartlinkTrackerService;
 import com.winds.smartlink.services.UserLinkService;
 import com.winds.smartlink.utils.Constants;
@@ -46,9 +42,6 @@ public class SmartlinkController {
 	private UserLinkService userLinkService;
 	
 	@Autowired
-	private SmartlinkService smartlinkService;
-
-	@Autowired
 	private UserService userService;
 
 	@RequestMapping(value = "/error", method = RequestMethod.GET)
@@ -60,19 +53,34 @@ public class SmartlinkController {
 	public ModelAndView loginPage(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
 		
+		User user = getCurrentUser();
+		
+		String link = String.format(Constants.LINK_TEMPLATE, 
+				WebUtils.getDomainAndPort(request),
+				user.getUserId(), 
+				System.currentTimeMillis());
+		
+		model.put("link", link);
+		
+		return new ModelAndView("smartlink", model);
+	}
+	
+	@RequestMapping(value = "/links", method = RequestMethod.POST)
+	public ModelAndView createLink(@ModelAttribute("userLink") UserLink userLink, HttpServletRequest request) {
+		ModelMap model = new ModelMap();
 		try {
-			SmartlinkUser userSmartlink = smartlinkService.findSmartlinkUserEmail(getPrincipal());
+			User user = getCurrentUser();
 			
-			String link = String.format(Constants.LINK_TEMPLATE, 
-					WebUtils.getDomainAndPort(request),
-					userSmartlink.getSmartlinkUserId(), 
-					System.currentTimeMillis());
+			userLink.setUserId(user.getUserId());
+			userLinkService.save(userLink);
 			
-			userSmartlink.setGenerateLink(link);
-			model.put("link", link);
+			makeDynamicLink(request, userLink.getLink(), userLink.getMetadata());
 			
-			smartlinkService.update(userSmartlink);
-		} catch (BusinessException e) {
+			model.put("link", userLink.getLink());
+			model.put("success", 1);
+
+		} catch (BusinessException | IOException e) {
+			model.put("success", -1);
 			e.printStackTrace();
 		}
 		
@@ -111,44 +119,20 @@ public class SmartlinkController {
 		
 		return null;
 	}
-
-	@RequestMapping(value = "/links", method = RequestMethod.POST)
-	public ModelAndView createLink(@ModelAttribute("userLink") UserLink userLink, HttpServletRequest request) {
-		ModelMap model = new ModelMap();
-		try {
-			SmartlinkUser userSmartlink = smartlinkService.findSmartlinkUserEmail(getPrincipal());
-			
-			userLink.setUserId(userSmartlink.getUserId());
-			userLink.setLink(userSmartlink.getGenerateLink());
-			userLink.setSmartlink(userSmartlink.getSmartlink().getLink());
-			userLinkService.save(userLink);
-			
-			makeDynamicLink(request, userSmartlink, userLink.getMetadata());
-			
-			model.put("link", userLink.getLink());
-			model.put("success", 1);
-
-		} catch (BusinessException | IOException e) {
-			model.put("success", -1);
-			e.printStackTrace();
-		}
-		
-		return new ModelAndView("smartlink", model);
-	}
 	
-	private void makeDynamicLink(HttpServletRequest request, SmartlinkUser userSmartlink, String metadata)
+	private void makeDynamicLink(HttpServletRequest request, String generateLink, String metadata)
 			throws IOException {
 		String realPath = request.getServletContext().getRealPath("/WEB-INF/pages/dp");
 		
 		String contextPath = request.getContextPath() + "/webs";
-		String dpDir = realPath + WebUtils.getPathAfterContextPatḥ̣(userSmartlink.getGenerateLink(), contextPath);
+		String dpDir = realPath + WebUtils.getPathAfterContextPatḥ̣(generateLink, contextPath);
 		String fileName = "index.jsp";
 
 		VelocityService vs = VelocityService.getInstance();
 
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("metadata", metadata);
-		data.put("redirectLink", userSmartlink.getSmartlink().getLink());
+		data.put("redirectLink", "${redirectLink}");
 		
 		vs.writeFile("index.vm", dpDir + "/" + fileName, data);
 	}

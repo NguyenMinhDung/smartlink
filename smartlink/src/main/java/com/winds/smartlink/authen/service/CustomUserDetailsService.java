@@ -54,10 +54,4 @@ public class CustomUserDetailsService implements UserDetailsService {
 		System.out.print("authorities :" + authorities);
 		return authorities;
 	}
-
-	public static void main(String[] args) {
-		BCryptPasswordEncoder encode = new BCryptPasswordEncoder();
-		System.out.println(encode.encode("admin"));
-		System.out.println(encode.encode("P@ssword"));
-	}
 }

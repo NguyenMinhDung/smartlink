@@ -59,17 +59,14 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="form-group">
-				<label for="link">Link dự kiến :</label> <input type="text"
-					class="form-control" id="link" name="link"
-					value="<s:escapeBody htmlEscape="true">${link}</s:escapeBody>"
-					disabled="disabled"> <input type="hidden" id="hdLink"
-					value="<s:escapeBody htmlEscape="true">${link}</s:escapeBody>" />
+				<label for="link">Link dự kiến :</label> 
+				<input type="text" class="form-control" id="link" name="link"
+					value="<s:escapeBody htmlEscape="true">${link}</s:escapeBody>" readonly="readonly"> 
 			</div>
 		</div>
 	</div>
 
-	<button id="btn-add-link" type="submit" class="btn btn-primary">Thêm
-		link</button>
+	<button id="btn-add-link" type="submit" class="btn btn-primary">Thêm link</button>
 </form:form>
 
 <script>

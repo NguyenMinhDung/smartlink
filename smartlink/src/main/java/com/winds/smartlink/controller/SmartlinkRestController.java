@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.winds.smartlink.authen.model.User;
+import com.winds.smartlink.authen.service.UserService;
 import com.winds.smartlink.dtos.GenerateLinkRequest;
 import com.winds.smartlink.dtos.GenerateLinkResponse;
 import com.winds.smartlink.exceptions.BusinessException;
-import com.winds.smartlink.models.SmartlinkUser;
 import com.winds.smartlink.models.UserLink;
-import com.winds.smartlink.services.SmartlinkService;
 import com.winds.smartlink.services.UserLinkService;
 import com.winds.smartlink.utils.Constants;
 import com.winds.smartlink.utils.JacksonUtils;
@@ -31,10 +31,10 @@ import com.winds.smartlink.utils.WebUtils;
 public class SmartlinkRestController {
 	
 	@Autowired
-	private SmartlinkService smartlinkService;
+	private UserLinkService userLinkService;
 	
 	@Autowired
-	private UserLinkService userLinkService;
+	private UserService userService;
 	
 	@RequestMapping(value = "/auto", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public @ResponseBody String generateLink(GenerateLinkRequest input, HttpServletRequest request){
@@ -47,7 +47,6 @@ public class SmartlinkRestController {
 
 	private String savelinkAndResponse(GenerateLinkRequest input, HttpServletRequest request) {
 		try {
-			//SmartlinkUser userSmartlink = smartlinkService.findSmartlinkUserEmail(URLDecoder.decode(input.getGmail(), "UTF-8"));
 			UserLink userLink = userLinkService.getUserLinkByUserAndCode(input.getId_mem(), input.getMahoa());
 			
 			// Make dynamic link
@@ -78,26 +77,25 @@ public class SmartlinkRestController {
 
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("metadata", metadata);
-		data.put("redirectLink", userLink.getSmartlink());
+		data.put("redirectLink", "${redirectLink}");
 		
 		vs.writeFile("index.vm", dpDir + "/" + fileName, data);
 	}
 
 	private String generateLinkAndResponse(GenerateLinkRequest input, HttpServletRequest request) {
 		try {
-			SmartlinkUser userSmartlink = smartlinkService.findSmartlinkUserEmail(input.getMem());
-			
 			long code = System.currentTimeMillis();
+			
+			User user = userService.findByUsername(input.getMem());
 			
 			String link = String.format(Constants.LINK_TEMPLATE, 
 					WebUtils.getDomainAndPort(request),
-					userSmartlink.getSmartlinkUserId(), 
+					user.getUserId(), 
 					code);
 			
 			UserLink userLink = new UserLink();
-			userLink.setUserId(userSmartlink.getUserId());
+			userLink.setUserId(user.getUserId());
 			userLink.setCode(code);
-			userLink.setSmartlink(userSmartlink.getSmartlink().getLink());
 			userLink.setLink(link);
 			
 			userLinkService.save(userLink);
@@ -105,7 +103,7 @@ public class SmartlinkRestController {
 			// Response
 			GenerateLinkResponse response = new GenerateLinkResponse();
 			response.setMahoa(code);
-			response.setMem(userSmartlink.getUserId());
+			response.setMem(user.getUserId());
 			response.setUrl(link);
 			
 			return JacksonUtils.toJson(response);
